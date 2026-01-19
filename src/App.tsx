@@ -36,6 +36,7 @@ interface ContentBlock {
   subLabel?: string;  // e.g. "Legislative Branch"
   content: string;
   sectionNumber?: number; // For display "Section 1"
+  searchTerms?: string;   // Additional searchable terms (e.g. "25" for 25th amendment)
   [key: string]: any; // Allow index signature for FlexSearch compatibility
 }
 
@@ -62,11 +63,10 @@ const processData = (): ContentBlock[] => {
           id: `article-${article.number}-section-${section.number}`,
           type: 'article',
           label: `Article ${article.number}`,
-          subLabel: article.title, // e.g. "Article I" title usually "Legislative Branch" in JSON? 
-          // Wait, JSON has title="Article I", description="Legislative Branch"
-          // Let's use title as label, description as subLabel
+          subLabel: article.title,
           content: section.text,
-          sectionNumber: section.number
+          sectionNumber: section.number,
+          searchTerms: `${article.number} article ${article.number} section ${section.number}`
         });
       });
     } else if (article.text) {
@@ -75,7 +75,8 @@ const processData = (): ContentBlock[] => {
         type: 'article',
         label: `Article ${article.number}`,
         subLabel: article.title,
-        content: article.text
+        content: article.text,
+        searchTerms: `${article.number} article ${article.number}`
       });
     }
   });
@@ -90,7 +91,8 @@ const processData = (): ContentBlock[] => {
           label: `${amendment.title}`,
           subLabel: amendment.description,
           content: section.text,
-          sectionNumber: section.number
+          sectionNumber: section.number,
+          searchTerms: `${amendment.number} amendment ${amendment.number} section ${section.number}`
         });
       });
     } else if (amendment.text) {
@@ -99,7 +101,8 @@ const processData = (): ContentBlock[] => {
         type: 'amendment',
         label: `${amendment.title}`,
         subLabel: amendment.description,
-        content: amendment.text
+        content: amendment.text,
+        searchTerms: `${amendment.number} amendment ${amendment.number}`
       });
     }
   });
@@ -305,7 +308,7 @@ function App() {
   const searchIndex = useMemo(() => new FlexSearch.Document({
     document: {
       id: "id",
-      index: ["content", "label", "subLabel"],
+      index: ["content", "label", "subLabel", "searchTerms"],
     },
     tokenize: "forward"
   }), []);
