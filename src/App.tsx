@@ -262,6 +262,7 @@ function App() {
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'reader' | 'bookmarks'>('reader');
   const [showSettings, setShowSettings] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   
   // Settings State with localStorage persistence
   const [settings, setSettings] = useState<Settings>(() => {
@@ -509,6 +510,45 @@ function App() {
           ))
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-zinc-200 dark:border-zinc-800 py-6 mt-8">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <button
+            onClick={() => setShowAbout(true)}
+            className="text-sm text-zinc-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-colors"
+          >
+            About
+          </button>
+        </div>
+      </footer>
+
+      {/* About Modal */}
+      {showAbout && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowAbout(false)}>
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6 border border-zinc-200 dark:border-zinc-800" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">About</h2>
+              <button onClick={() => setShowAbout(false)} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="prose prose-sm dark:prose-invert max-w-none text-zinc-600 dark:text-zinc-300 space-y-4">
+              {/* Content will be added here */}
+              <p>Whether you need to cite the constitution or you just want to read it, the 
+                last thing you want to see is "Loading..." Add this link to your home screen and a searchable,
+                bookmarkable constitution is always
+                just a tap away.
+              </p>
+              
+              <p>This app is open source! Check out the code on 
+                <a href="https://github.com/ShakespeareGeek/portable-us-constitution" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline"> GitHub</a>.
+                Host a copy on your own domain!
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Settings Modal */}
       {showSettings && (
